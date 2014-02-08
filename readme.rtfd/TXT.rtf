@@ -1,0 +1,253 @@
+{\rtf1\ansi\ansicpg936\cocoartf1265
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset134 STHeitiSC-Light;\f2\fnil\fcharset0 Monaco;
+}
+{\colortbl;\red255\green255\blue255;\red19\green74\blue104;\red255\green255\blue255;\red51\green153\blue0;
+\red0\green0\blue255;\red204\green0\blue203;\red245\green120\blue0;\red206\green92\blue0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww21220\viewh15020\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\f0\fs24 \cf0 git clone git@192.168.1.11:repositories/bin.git\
+\
+\
+[14-1-9 
+\f1 \'cf\'c2\'ce\'e7
+\f0 6:19:43] 
+\f1 \'d6\'dc\'cf\'a3
+\f0 : http://192.168.1.20/phpmyadmin\
+[14-1-9 
+\f1 \'cf\'c2\'ce\'e7
+\f0 6:21:13] 
+\f1 \'d6\'dc\'cf\'a3
+\f0 : 
+\f1 \'d5\'cb\'ba\'c5\'a3\'ba
+\f0 root\
+\
+\
+1.31\
+1.20\
+
+\f1 \'b5\'e3\'bb\'f7\'d1\'a1\'d4\'f1\'d0\'e8\'d2\'aa\'ca\'b9\'d3\'c3\'b5\'c4\'b7\'fb\'ce\'c4\
+\
+\'c3\'dc\'c2\'eb\'a3\'batZwT3tLAlgZX\
+\
+Dark Avenger unity3d shader play shelter\
+\
+\pard\pardeftab720\sl500
+
+\f0\b\fs36 \cf2 \cb3 Application\cf0 .RegisterLogCallback
+\f1\b0\fs24 \cb1 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 \
+\
+\
+\pard\pardeftab720
+
+\f2\fs32 \cf4 // Simplified VertexLit shader. Differences from regular VertexLit one:\
+// - no per-material color\
+// - no specular\
+// - no emission\
+\
+\cf5 Shader\cf0  \cf6 "Mobile/charactor"\cf0  \{\
+\cf5 Properties\cf0  \{\
+	_MainTex (\cf6 "Base (RGBA)"\cf0 , \cf6 2D\cf0 ) = \cf6 "white"\cf0  \{\}\
+    _DiffuseColor (\cf6 "Diffuse color"\cf0 , \cf5 Color\cf0 )  = (\cf6 1\cf0 , \cf6 1\cf0 , \cf6 1\cf0 , \cf6 1\cf0 )\
+	_DepthNormal (\cf6 "Base (RGBA)"\cf0 , \cf6 2D\cf0 ) = \cf6 "white"\cf0  \{\}\
+    _RimColor(\cf6 "Rim Color"\cf0 ,\cf5 color\cf0 ) = (\cf6 0.447\cf0 ,\cf6 0.79\cf0 ,\cf6 0.88\cf0 ,\cf6 1\cf0 )    \
+    _RimPower(\cf6 "Rim Power"\cf0 ,\cf5 float\cf0 ) = -\cf6 0.22\cf0  \
+    _RimBright(\cf6 "Rim Bright"\cf0 ,\cf5 float\cf0 ) = \cf6 1.58\cf0   \
+    _RimAlpha(\cf6 "Rim Alpha"\cf0 ,\cf5 float\cf0 ) = \cf6 1.0\cf0   \
+\}\
+\
+\cf4 // ---- Dual texture cards\
+\cf5 SubShader\cf0  \{\
+	\cf5 Tags\cf0  \{ \cf6 "RenderType"\cf0 =\cf6 "Opaque"\cf0  \}\
+	LOD \cf6 80\
+\cf0 	\
+	\cf5 Pass\cf0  \{\
+		\cf5 Tags\cf0  \{ \cf6 "Queue"\cf0  = \cf6 "Transparent"\cf0  \cf6 "RenderType"\cf0 =\cf6 "Transparent"\cf0  \cf6 "IgnoreProjector"\cf0 =\cf6 "True"\cf0 \}   \
+			\cf5 Cull\cf0  \cf6 back\
+\cf0 	        \cf5 ZTest\cf0  \cf6 Greater\
+\cf0 	        \cf5 Blend\cf0  \cf6 SrcAlpha\cf0  \cf6 OneMinusSrcAlpha\cf0   \
+	        \cf5 Fog\cf0  \{ \cf5 Color\cf0  (\cf6 0\cf0 ,\cf6 0\cf0 ,\cf6 0\cf0 ,\cf6 0\cf0 ) \} \
+       		\cf5 ZWrite\cf0  \cf6 Off\cf0    \
+            \
+           	\cf7 CGPROGRAM\
+\cf0             \cf7 #\cf8 pragma\cf7  vertex vert\
+\cf0             \cf7 #\cf8 pragma\cf7  fragment frag\
+\cf0             \cf7 #\cf8 include\cf7  "UnityCG.cginc"\
+\cf0             \
+            \cf5 float4\cf0  _MainTex_ST;\
+            \cf5 sampler2D\cf0  _MainTex; \
+        	\cf5 half\cf0  _RimBright;\
+            \cf5 half4\cf0  _RimColor; \
+       	 	\cf5 half\cf0  _RimPower;  \
+       	 	\cf5 half\cf0  _RimAlpha; \
+            \
+            \cf5 struct\cf0  v2f \{\
+			    \cf5 float4\cf0   pos : SV_POSITION;\
+			    \cf5 float2\cf0   uv : \cf6 TEXCOORD0\cf0 ;\
+			    \cf5 float4\cf0   \cf5 color\cf0  : \cf5 COLOR\cf0 ;\
+			\}  ;\
+\
+            v2f vert (appdata_base v)\
+            \{\
+            	v2f o;\
+   				o.pos = \cf5 mul\cf0 (UNITY_MATRIX_MVP,v.\cf6 vertex\cf0 );\
+				o.uv = TRANSFORM_TEX(v.\cf6 texcoord\cf0 ,_MainTex);\
+				\
+				\cf5 float3\cf0  viewDir = ObjSpaceViewDir( v.\cf6 vertex\cf0  );  \
+				\cf5 fixed\cf0  NdotE = \cf5 max\cf0 (\cf6 0\cf0 ,\cf5 dot\cf0 (v.\cf6 normal\cf0  ,viewDir)); \
+	            \cf5 fixed\cf0  rimLight = \cf6 1\cf0 -NdotE; \
+	            rimLight = \cf5 pow\cf0 (rimLight,_RimPower); \
+	              \
+	            \cf5 fixed4\cf0  c;  \
+	            c.\cf6 rgb\cf0  = rimLight.xxx* _RimColor * _RimBright;  \
+	            c.\cf6 a\cf0  = rimLight.x;\
+	            o.\cf5 color\cf0  = c;				\
+    			\cf5 return\cf0  o;\
+            \}\
+            \
+            \
+            \cf5 float4\cf0  frag (v2f i) : \cf5 COLOR\
+\cf0 			\{\
+				\cf5 float4\cf0  texCol = \cf5 tex2D\cf0 (_MainTex,i.uv);\
+			    \cf5 float4\cf0  outp = texCol;\
+				outp.\cf6 rgb\cf0  = i.\cf5 color\cf0 .\cf6 rgb\cf0 ;\
+				outp.\cf6 a\cf0  = \cf5 min\cf0 (\cf6 0.6\cf0 ,i.\cf5 color\cf0 .\cf6 a\cf0 *texCol.\cf6 a\cf0 *_RimAlpha);\
+			    \cf5 return\cf0   outp;\
+			\}\
+			\cf7 ENDCG\
+\
+\cf0         \}\
+        \
+	\cf4 // Non-lightmapped\
+\cf0 	\cf5 Pass\cf0  \{\
+		\cf5 Tags\cf0  \{ \cf6 "LightMode"\cf0  = \cf6 "Vertex"\cf0  \}\
+	\
+        \cf5 AlphaTest\cf0  \cf6 Greater\cf0  \cf6 0.5\
+\cf0 		\
+		\cf5 Cull\cf0  \cf6 Off\
+\
+\cf0 		\cf5 Material\cf0  \{\
+			\cf5 Diffuse\cf0  [_DiffuseColor]\
+			\cf5 Ambient\cf0  (\cf6 1\cf0 ,\cf6 1\cf0 ,\cf6 1\cf0 ,\cf6 1\cf0 )\
+			\cf5 Emission\cf0  (\cf6 0.2\cf0 ,\cf6 0.2\cf0 ,\cf6 0.2\cf0 ,\cf6 1\cf0 )\
+		\}  \
+		\cf5 Lighting\cf0  \cf6 On\
+\cf0 		\cf5 SetTexture\cf0  [_MainTex] \{\
+			\cf5 Combine\cf0  \cf5 texture\cf0  * primary DOUBLE, \cf5 texture\cf0  * primary\
+		\}  \
+	\}\
+	\
+	\cf4 // Lightmapped, encoded as dLDR\
+\cf0 	\cf5 Pass\cf0  \{\
+		\cf5 Tags\cf0  \{ \cf6 "LightMode"\cf0  = \cf6 "VertexLM"\cf0  \}\
+		\
+        \cf5 AlphaTest\cf0  \cf6 Greater\cf0  \cf6 0.5\
+\
+\cf0 		\cf5 Cull\cf0  \cf6 Off\
+\
+\cf0 		\cf5 BindChannels\cf0  \{\
+			\cf5 Bind\cf0  \cf6 "Vertex"\cf0 , \cf6 vertex\
+\cf0 			\cf5 Bind\cf0  \cf6 "normal"\cf0 , \cf6 normal\
+\cf0 			\cf5 Bind\cf0  \cf6 "texcoord1"\cf0 , \cf6 texcoord0\cf0  \cf4 // lightmap uses 2nd uv\
+\cf0 			\cf5 Bind\cf0  \cf6 "texcoord"\cf0 , \cf6 texcoord1\cf0  \cf4 // main uses 1st uv\
+\cf0 		\}\
+		\
+		\cf5 SetTexture\cf0  [unity_Lightmap] \{\
+			\cf5 matrix\cf0  [unity_LightmapMatrix]\
+			\cf5 combine\cf0  \cf5 texture\
+\cf0 		\}\
+		\cf5 SetTexture\cf0  [_MainTex] \{\
+			\cf5 combine\cf0  \cf5 texture\cf0  * \cf5 previous\cf0  DOUBLE, \cf5 texture\cf0  * primary\
+		\}\
+	\}\
+	\
+	\cf4 // Lightmapped, encoded as RGBM\
+\cf0 	\cf5 Pass\cf0  \{\
+		\cf5 Tags\cf0  \{ \cf6 "LightMode"\cf0  = \cf6 "VertexLMRGBM"\cf0  \}\
+\
+        \cf5 AlphaTest\cf0  \cf6 Greater\cf0  \cf6 0.5\
+\
+\cf0 		\cf5 Cull\cf0  \cf6 Off\
+\
+\cf0 		\cf5 BindChannels\cf0  \{\
+			\cf5 Bind\cf0  \cf6 "Vertex"\cf0 , \cf6 vertex\
+\cf0 			\cf5 Bind\cf0  \cf6 "normal"\cf0 , \cf6 normal\
+\cf0 			\cf5 Bind\cf0  \cf6 "texcoord1"\cf0 , \cf6 texcoord0\cf0  \cf4 // lightmap uses 2nd uv\
+\cf0 			\cf5 Bind\cf0  \cf6 "texcoord"\cf0 , \cf6 texcoord1\cf0  \cf4 // main uses 1st uv\
+\cf0 		\}\
+		\
+		\cf5 SetTexture\cf0  [unity_Lightmap] \{\
+			\cf5 matrix\cf0  [unity_LightmapMatrix]\
+			\cf5 combine\cf0  \cf5 texture\cf0  * \cf5 texture\cf0  alpha DOUBLE\
+		\}\
+		\cf5 SetTexture\cf0  [_MainTex] \{\
+			\cf5 combine\cf0  \cf5 texture\cf0  * \cf5 previous\cf0  QUAD, \cf5 texture\cf0  * primary\
+		\}\
+	\}	\
+\}\
+\
+\cf4 // ---- Single texture cards (requires 2 passes for lightmapped)\
+\cf5 SubShader\cf0  \{\
+	\cf5 Tags\cf0  \{ \cf6 "RenderType"\cf0 =\cf6 "Opaque"\cf0  \}\
+	LOD \cf6 100\
+\
+\cf0 	\cf4 // Non-lightmapped\
+\cf0 	\cf5 Pass\cf0  \{\
+		\cf5 Tags\cf0  \{ \cf6 "LightMode"\cf0  = \cf6 "Vertex"\cf0  \}\
+		\
+        \cf5 AlphaTest\cf0  \cf6 Greater\cf0  \cf6 0.5\
+\
+\cf0         \cf5 Cull\cf0  \cf6 Off\
+\
+\cf0 		\cf5 Material\cf0  \{\
+			\cf5 Diffuse\cf0  [_DiffuseColor]\
+			\cf5 Ambient\cf0  (\cf6 1\cf0 ,\cf6 1\cf0 ,\cf6 1\cf0 ,\cf6 1\cf0 )\
+		\}  \
+		\cf5 Lighting\cf0  \cf6 On\
+\cf0 		\cf5 SetTexture\cf0  [_MainTex] \{\
+			\cf5 Combine\cf0  \cf5 texture\cf0  * primary DOUBLE, \cf5 texture\cf0  * primary\
+		\}  \
+	\}	\
+	\cf4 // Lightmapped, encoded as dLDR\
+\cf0 	\cf5 Pass\cf0  \{\
+		\cf4 // 1st pass - sample Lightmap\
+\cf0 		\cf5 Tags\cf0  \{ \cf6 "LightMode"\cf0  = \cf6 "VertexLM"\cf0  \}\
+\
+        \cf5 AlphaTest\cf0  \cf6 Greater\cf0  \cf6 0.5\
+\
+\cf0 		\cf5 Cull\cf0  \cf6 Off\cf0 	\
+\
+		\cf5 BindChannels\cf0  \{\
+			\cf5 Bind\cf0  \cf6 "Vertex"\cf0 , \cf6 vertex\
+\cf0 			\cf5 Bind\cf0  \cf6 "texcoord1"\cf0 , \cf6 texcoord0\cf0  \cf4 // lightmap uses 2nd uv\
+\cf0 		\}		\
+		\cf5 SetTexture\cf0  [unity_Lightmap] \{\
+			\cf5 matrix\cf0  [unity_LightmapMatrix]\
+			\cf5 combine\cf0  \cf5 texture\
+\cf0 		\}\
+	\}\
+	\cf5 Pass\cf0  \{\
+		\cf4 // 2nd pass - multiply with _MainTex\
+\cf0 		\cf5 Tags\cf0  \{ \cf6 "LightMode"\cf0  = \cf6 "VertexLM"\cf0  \}\
+        \cf5 AlphaTest\cf0  \cf6 Greater\cf0  \cf6 0.5\
+\cf0 		\cf5 ZWrite\cf0  \cf6 Off\
+\cf0         \cf5 Cull\cf0  \cf6 Off\
+\cf0 		\cf5 Fog\cf0  \{\cf5 Mode\cf0  \cf6 Off\cf0 \}\
+		\cf5 Blend\cf0  \cf6 DstColor\cf0  \cf6 Zero\
+\cf0 		\cf5 SetTexture\cf0  [_MainTex] \{\
+			\cf5 combine\cf0  \cf5 texture\
+\cf0 		\}\
+	\}\
+\}\
+\}\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\f1\fs24 \cf0 \
+\
+\
+\
+\
+\
+}
